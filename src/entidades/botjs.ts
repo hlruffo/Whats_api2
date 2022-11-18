@@ -1,3 +1,4 @@
+import { Iprojeto } from './interfaces/Iprojeto';
 import { PATH_CHROME } from './../utils/constants';
 import { Client, LocalAuth, Message } from 'whatsapp-web.js'
 import Qrcode from "qrcode-terminal"
@@ -19,7 +20,7 @@ export class BotJS {
         private params: {
             timeout: number;
             useChrome?: boolean;
-            //projeto?: IProjeto;
+            projeto?: Iprojeto;
             pathSession?: string;
         }
     ) {
@@ -27,12 +28,12 @@ export class BotJS {
         this.initializeEvents();
     }
 
-    public async execute(){
+    public async execute() {
         await this.bot.initialize();
         this.process()
     }
 
-    public async enviar(msg:IEnvioMensagem){
+    public async enviar(msg: IEnvioMensagem) {
         msg.injetarBOT(this.bot);
         msg.enviar();
     }
@@ -41,8 +42,11 @@ export class BotJS {
         while (true) {
             if (this.messageList.length > 0) {
                 const msg = this.messageList.shift()
-                if (msg?.message.body.startsWith('!canal')) {
-                    msg?.message.reply('Sim eu sou um bot, seu bundão ')
+                if (msg && this.params.projeto) {
+                    const response = await this.params.projeto.mensagemRecebida(msg);
+                    if (response) {
+                        this.enviar(response)
+                    }
                 }
             }
             console.log("Messages" + this.messageList.length)

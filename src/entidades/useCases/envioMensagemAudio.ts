@@ -3,7 +3,7 @@ import { BaseEnvio } from './baseEnvio';
 
 
 export class EnvioMensagemAudio extends BaseEnvio {
-    constructor(private data: { para: string; mensagem: string, path: string, audioAsVoice?: boolean }) {
+    constructor(private data: { para: string; mensagem: string, path: string, audioAsVoice?: boolean, AsDocument?:boolean }) {
         super()
     }
 
@@ -12,7 +12,8 @@ export class EnvioMensagemAudio extends BaseEnvio {
 
         await this.bot?.sendMessage(this.data.para, audio, {
             caption: this.data.mensagem,
-            sendAudioAsVoice: this.data.audioAsVoice
+            sendAudioAsVoice: this.data.audioAsVoice,
+            sendMediaAsDocument: this.data.AsDocument
         })
         return;
 
