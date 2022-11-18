@@ -1,4 +1,4 @@
-import { Client, MessageMedia } from 'whatsapp-web.js';
+import { MessageMedia } from 'whatsapp-web.js';
 
 import { BaseEnvio } from './baseEnvio';
 

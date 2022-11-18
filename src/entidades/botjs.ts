@@ -1,9 +1,8 @@
-import { IEnvioMensagem } from './interfaces/IEnvioMensagem';
+import { PATH_CHROME } from './../utils/constants';
 import { Client, LocalAuth, Message } from 'whatsapp-web.js'
 import Qrcode from "qrcode-terminal"
-//import { resolve } from 'styled-jsx/css'
 import { IRecievedMessage } from "./interfaces/IRecievedMessage"
-
+import { IEnvioMensagem } from './interfaces/IEnvioMensagem';
 
 
 function delay(timeout: number) {
@@ -13,22 +12,27 @@ function delay(timeout: number) {
 }
 
 export class BotJS {
-    private messageList: IRecievedMessage[] = []
-    private bot: Client
-    private timeout: number
+    private messageList: IRecievedMessage[] = [];
+    private bot: Client;
 
-    constructor(timeout: number = 5000) {
-        this.timeout = timeout
-        this.bot = this.create()
-        this.initializeEvents()
+    constructor(
+        private params: {
+            timeout: number;
+            useChrome?: boolean;
+            //projeto?: IProjeto;
+            pathSession?: string;
+        }
+    ) {
+        this.bot = this.create();
+        this.initializeEvents();
     }
 
-    public async execute() {
-        await this.bot.initialize()
+    public async execute(){
+        await this.bot.initialize();
         this.process()
     }
 
-    public async enviar(msg: IEnvioMensagem){
+    public async enviar(msg:IEnvioMensagem){
         msg.injetarBOT(this.bot);
         msg.enviar();
     }
@@ -43,12 +47,15 @@ export class BotJS {
             }
             console.log("Messages" + this.messageList.length)
 
-            await delay(this.timeout)
+            await delay(this.params.timeout)
         }
     }
 
     private create(): Client {
         return new Client({
+            puppeteer: {
+                executablePath: this.params.useChrome ? PATH_CHROME : undefined,
+            },
             authStrategy: new LocalAuth()
         });
     }

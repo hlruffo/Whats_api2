@@ -1,10 +1,12 @@
-import { PATH_MEDIA } from './utils/constants';
-import { EnvioMensagemImagem } from './entidades/useCases/envioMensagemImagem';
-import { EnvioMensagemTexto } from './entidades/useCases/envioMensagemTexto';
+import { EnvioMensagemImagem, EnvioMensagemAudio, EnvioMensagemTexto, EnvioMensagemVideo } from './entidades/useCases';
 import { BotJS } from './entidades/botjs';
-import { EnvioMensagemAudio } from './entidades/useCases/envioMensagemAudio';
+import { PATH_MEDIA } from './utils/constants';
+import { resolve } from "path"
 
-const bot = new BotJS(1000)
+const bot = new BotJS({
+    timeout: 5000,
+    useChrome: true,
+})
 
 const mensagemTexto = new EnvioMensagemTexto({
     para: "5521982222126@c.us",
@@ -13,13 +15,20 @@ const mensagemTexto = new EnvioMensagemTexto({
 const mensagemImagem = new EnvioMensagemImagem({
     para: "5521982222126@c.us",
     mensagem: "curtiu minha pic?",
-    path: PATH_MEDIA + "Screenshot.png"
+    path: resolve(PATH_MEDIA + "Screenshot.png")
 });
 const mensagemAudio = new EnvioMensagemAudio({
     para: "5521982222126@c.us",
     mensagem: "curtiu minha pic?",
-    path: PATH_MEDIA + "audioteste.ogg",
+    path: resolve(PATH_MEDIA + "audioteste.ogg"),
     audioAsVoice: false,
+});
+const mensagemVideo = new EnvioMensagemVideo({
+    para: "5521982222126@c.us",
+    mensagem: "Eu sei dançar",
+    path: resolve(PATH_MEDIA + "video.mp4"),
+    AsDocument: false,
+    AsGif: false,
 });
 
 (async () => {
@@ -27,5 +36,6 @@ const mensagemAudio = new EnvioMensagemAudio({
     await bot.enviar(mensagemTexto)
     await bot.enviar(mensagemImagem)
     await bot.enviar(mensagemAudio)
-    
+    await bot.enviar(mensagemVideo)
+
 })()
