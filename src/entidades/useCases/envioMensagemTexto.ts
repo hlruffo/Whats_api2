@@ -1,16 +1,12 @@
 import { Client } from 'whatsapp-web.js';
 import { IEnvioMensagem } from './../interfaces/IEnvioMensagem';
+import { BaseEnvio } from './baseEnvio';
 
 
-export class EnvioMensagemTexto implements IEnvioMensagem {
-    private bot: Client | undefined;
-
+export class EnvioMensagemTexto extends BaseEnvio {
     constructor(private data: { para: string; mensagem: string }) {
-    }
-
-    injetarBOT(bot: Client): void {
-        this.bot = bot;
-    }
+        super()
+     }  
 
     async enviar(): Promise<void> {
         await this.bot?.sendMessage(this.data.para, this.data.mensagem)
