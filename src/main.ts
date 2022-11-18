@@ -1,5 +1,15 @@
-import {Sistema} from "./sistema"
+import { EnvioMensagemTexto } from './entidades/useCases/envioMensagemTexto';
+import { BotJS } from './entidades/botjs';
 
-const sistema = new Sistema()
+const bot = new BotJS(1000)
 
-sistema.execute()
+const mensagemTexto = new EnvioMensagemTexto({
+    para:"5521982222126@c.us",
+    mensagem: "oi gatão",
+});
+
+(async ()=>{
+    await bot.execute();
+    await bot.enviar(mensagemTexto)
+    
+})()
