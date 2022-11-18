@@ -1,9 +1,9 @@
-import { Iprojeto } from './interfaces/Iprojeto';
-import { PATH_CHROME } from './../utils/constants';
+import {IReceiviedMessage} from './interfaces/IMessageReceived'
+import { IMessageSend } from './interfaces/IMessageSend';
 import { Client, LocalAuth, Message } from 'whatsapp-web.js'
 import Qrcode from "qrcode-terminal"
-import { IRecievedMessage } from "./interfaces/IRecievedMessage"
-import { IEnvioMensagem } from './interfaces/IEnvioMensagem';
+import { resolve } from 'styled-jsx/css'
+
 
 
 function delay(timeout: number) {
@@ -13,53 +13,41 @@ function delay(timeout: number) {
 }
 
 export class BotJS {
-    private messageList: IRecievedMessage[] = [];
-    private bot: Client;
+    private messageList: IReceiviedMessage[] = []
+    private bot: Client
+    private timeout: number
 
-    constructor(
-        private params: {
-            timeout: number;
-            useChrome?: boolean;
-            projeto?: Iprojeto;
-            pathSession?: string;
-        }
-    ) {
-        this.bot = this.create();
-        this.initializeEvents();
+    constructor(timeout: number = 5000) {
+        this.timeout = timeout
+        this.bot = this.create()
+        this.initializeEvents()
     }
 
     public async execute() {
-        await this.bot.initialize();
+        await this.bot.initialize()
         this.process()
     }
 
-    public async enviar(msg: IEnvioMensagem) {
-        msg.injetarBOT(this.bot);
-        msg.enviar();
+    public async send(msg: IMessageSend) {
+
     }
 
     private async process() {
         while (true) {
             if (this.messageList.length > 0) {
                 const msg = this.messageList.shift()
-                if (msg && this.params.projeto) {
-                    const response = await this.params.projeto.mensagemRecebida(msg);
-                    if (response) {
-                        this.enviar(response)
-                    }
+                if (msg?.message.body.startsWith('!canal')) {
+                    msg?.message.reply('Sim eu sou um bot, seu bundão ')
                 }
             }
             console.log("Messages" + this.messageList.length)
 
-            await delay(this.params.timeout)
+            await delay(this.timeout)
         }
     }
 
     private create(): Client {
         return new Client({
-            puppeteer: {
-                executablePath: this.params.useChrome ? PATH_CHROME : undefined,
-            },
             authStrategy: new LocalAuth()
         });
     }
@@ -76,7 +64,7 @@ export class BotJS {
                 message
             })
             console.log(this.messageList.length);
-            
+
             console.log(`Mensagem recebida de ${message.from}: ${message.body}`)
 
         })
